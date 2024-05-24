@@ -70,15 +70,6 @@ plot_temperature <- plot_ly(data, x = ~temperature, y = ~casos, type = "scatter"
 
 plot_temperature
 
-# Scatter plot matrix for all variables
-plot_matrix <- plot_ly(data, x = ~precipitation, y = ~temperature, z = ~casos, type = "scatter3d",
-                       mode = "markers", marker = list(size = 3, color = ~casos)) %>%
-              layout(title = "Scatter Plot Matrix",
-                     scene = list(xaxis = list(title = "Total Precipitation"),
-                                  yaxis = list(title = "Temperature"),
-                                  zaxis = list(title = "Dengue Cases")))
-
-plot_matrix
 
 ```
 
