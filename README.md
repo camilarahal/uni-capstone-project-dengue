@@ -1,4 +1,4 @@
-# "Investigating the Association Between Total Precipitation, Temperature, and Dengue Incidence
+# Investigating the Association Between Total Precipitation, Temperature, and Dengue Incidence
 ## Overview:
 This repository contains scripts for data collection, preparation, cleaning, merging, and statistical analysis related to dengue and meteorological data. Each script serves a specific purpose in the data analysis pipeline.
 
