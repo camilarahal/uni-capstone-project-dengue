@@ -9,10 +9,10 @@ library(rvest)
 library(readr)
 
 # Define the URL of the webpage
-url <- "https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue/situacao-epidemiologica/serie-historica-casos-provaveis-de-dengue-2000-2023/view"
+url_dengue <- "https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue/situacao-epidemiologica/serie-historica-casos-provaveis-de-dengue-2000-2023/view"
 
 # Read the HTML content of the page
-webpage <- read_html(url)
+webpage <- read_html(url_dengue)
 
 # Scrape the URL of the PDF file using XPath
 pdf_link <- webpage %>%
@@ -28,9 +28,10 @@ pdf_text <- pdf_text("dengue_data.pdf")
 # Print the extracted text
 cat(pdf_text)
 
-rm(list = ls())
 
-#----- Scrape website for annual meteorological data from Brasil (2000 to 2024)
+#----- Scrape INMET website for annual meteorological data from Brasil - 2000 to 2024 
+
+# !Important - it takes between 5 to 10 minutes, 6,9 GB, so be aware with disk space before running the code)
 
 
 # URL of the page
