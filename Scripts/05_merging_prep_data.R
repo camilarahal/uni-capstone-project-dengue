@@ -27,8 +27,11 @@ merged_data <- merge(data1, data2, by = "month_year", all = TRUE)
 # View the merged data
 View(merged_data)
 
+# Remove or impute missing values
+merged_data <- na.omit(merged_data)
+
 # Write the merged data to a new CSV file
-write.csv(merged_data, "final_table.csv", row.names = FALSE)
+write.csv(merged_data, "Data/data-regression/final_table.csv", row.names = FALSE)
 
 print(merged_data)
 
