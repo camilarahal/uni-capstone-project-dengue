@@ -28,63 +28,81 @@ pdf_text <- pdf_text("dengue_data.pdf")
 # Print the extracted text
 cat(pdf_text)
 
-#----- Scrape tables .csv file cases per city in the state of São Paulo from 2019 to 2024
+rm(list = ls())
+
+#----- Scrape website for annual meteorological data from Brasil (2000 to 2024)
 
 
-# Define the base URL of the webpage
-url <- "https://saude.sp.gov.br/cve-centro-de-vigilancia-epidemiologica-prof.-alexandre-vranjac/oldzoonoses/dengue/dados-estatisticos#"
+# URL of the page
+url <- "https://portal.inmet.gov.br/dadoshistoricos"
 
-# Read the webpage
-webpage <- read_html(url)
+# Read the HTML content of the page
+page <- read_html(url)
 
-# Extract all links from the webpage
-all_links <- webpage %>%
-  html_nodes("a") %>%
+# Extract all the links containing "ANO" from the page
+links <- page %>%
+  html_nodes(xpath = '//a[contains(text(), "ANO")]') %>%
   html_attr("href")
 
-# Filter links containing .csv
-csv_links <- all_links[grep(".csv", all_links)]
+# Base URL for the files
+base_url <- "https://portal.inmet.gov.br/uploads/dadoshistoricos/"
 
-# Download the specific links
-for (link in csv_links) {
-  # Check if the link is an absolute path
-  if (!grepl("^https?://", link)) {
-    # If not, construct the full URL
-    link <- paste0(url, link)
+# Define a function to download and unzip files with error handling
+
+# This can take between 5 to 10 minutes
+
+download_and_unzip <- function(link) {
+  # Extract the year from the link
+  year <- sub('.*\\/(\\d{4})\\.zip', '\\1', link)
+  
+  # Construct the full download URL
+  download_url <- paste0(base_url, year, ".zip")
+  
+  # Attempt to download the file with retry logic
+  attempts <- 0
+  success <- FALSE
+  while (!success && attempts < 3) {  # Retry up to 3 times
+    attempts <- attempts + 1
+    tryCatch({
+      download.file(download_url, destfile = paste0("ANO_", year, ".zip"))
+      success <- TRUE
+    }, error = function(e) {
+      cat("Error downloading:", download_url, "\n")
+      if (attempts < 3) {
+        cat("Retrying...\n")
+        Sys.sleep(5)  # Wait 5 seconds before retrying
+      }
+    })
   }
-  download.file(link, basename(link))
-  Sys.sleep(1) # Wait for 1 second
+  
+  # Check if download was successful
+  if (success) {
+    cat("Downloaded:", download_url, "\n")
+    # Attempt to unzip the downloaded file
+    tryCatch({
+      unzip(paste0("ANO_", year, ".zip"), exdir = paste0("ANO_", year))
+      cat("Unzipped:", paste0("ANO_", year, ".zip"), "\n")
+    }, error = function(e) {
+      cat("Error unzipping:", paste0("ANO_", year, ".zip"), "\n")
+      file.remove(paste0("ANO_", year, ".zip"))  # Remove the zip file if there's an error
+    })
+  } else {
+    cat("Failed to download:", download_url, "\n")
+  }
+} 
+
+# Loop through each link and call the function to download and unzip
+for (link in links) {
+  download_and_unzip(link)
+}
+ 
+# Get a list of all zip files in the directory
+zip_files <- list.files(pattern = "\\.zip$")
+
+# Delete each zip file
+for (file in zip_files) {
+  file.remove(file)
 }
 
-# Filter the .htm files using Selenium
-
-install.packages("RSelenium")
-remotes::install_github("ropensci/wdman")
-wdman::install()
-
-
-library(RSelenium)
-library(rvest)
-
-# Start a Selenium server
-rD <- rsDriver(browser = c("chrome"))
-
-# Connect to the remote Selenium server
-remDr <- rD[["client"]]
-
-# Define the URL of the webpage
-base_url <- "https://saude.sp.gov.br/cve-centro-de-vigilancia-epidemiologica-prof.-alexandre-vranjac/oldzoonoses/dengue/dados-estatisticos#"
-
-# Navigate to the webpage
-remDr$navigate(base_url)
-
-# Find all download buttons and click them
-download_buttons <- remDr$findElements(using = "css selector", ".download")
-for (button in download_buttons) {
-  button$clickElement()
-  Sys.sleep(5) # Wait for the file to download (adjust the sleep time as needed)
-}
-
-# Quit the Selenium server
-rD[["server"]]$stop()
-
+# Confirm deletion
+cat("Deleted", length(zip_files), "zip files.\n")
