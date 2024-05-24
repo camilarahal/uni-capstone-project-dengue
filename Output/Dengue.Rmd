@@ -46,32 +46,43 @@ A linear regression model was applied to investigate any association between tot
 
 ## Association Between Total Precipitation, Temperature, and Dengue Incidence
 
+
 ```{r setup, include=FALSE}
 library(plotly)
 library(readr)
+library(dplyr)
 
-data <- read.csv("Data/data-regression/final_table.csv")
+setwd("/Applications/Working_Directory/uni-capstone-project-dengue/")
 
+data <- read.csv("/Applications/Working_Directory/uni-capstone-project-dengue/Data/data-regression/final_table.csv", fileEncoding = "UTF-8-BOM")
 # Scatter plot of total precipitation vs. dengue cases
 plot_precipitation <- plot_ly(data, x = ~precipitation, y = ~casos, type = "scatter", mode = "markers",
-                               marker = list(color = "blue")) %>%
-                      layout(title = "Total Precipitation vs. Dengue Cases",
-                             xaxis = list(title = "Total Precipitation"),
-                             yaxis = list(title = "Dengue Cases"))
-
-plot_precipitation
+                              marker = list(color = "blue")) %>%
+  layout(title = "Total Precipitation vs. Dengue Cases",
+         xaxis = list(title = "Total Precipitation"),
+         yaxis = list(title = "Dengue Cases"))
 
 # Scatter plot of temperature vs. dengue cases
 plot_temperature <- plot_ly(data, x = ~temperature, y = ~casos, type = "scatter", mode = "markers",
                             marker = list(color = "orange")) %>%
-                     layout(title = "Temperature vs. Dengue Cases",
-                            xaxis = list(title = "Temperature"),
-                            yaxis = list(title = "Dengue Cases"))
+  layout(title = "Temperature vs. Dengue Cases",
+         xaxis = list(title = "Temperature"),
+         yaxis = list(title = "Dengue Cases"))
 
+```
+
+```{r plot_precipitation, echo=TRUE}
+plot_precipitation
 plot_temperature
 
 
+
+
+
+
 ```
+
+
 
 # Discussion
 
