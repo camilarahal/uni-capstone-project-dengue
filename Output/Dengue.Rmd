@@ -1,0 +1,105 @@
+---
+title: "Investigating the Association Between Total Precipitation, Temperature, and Dengue Incidence"
+author: "Camila Batista Rahal"
+date: "2024-05-24"
+output: html_document
+---
+
+# Introduction
+
+Dengue fever is a significant public health concern in many parts of the world, including Brazil. Understanding the factors influencing dengue incidence is crucial for effective prevention and control strategies. This research aims to investigate the association between total precipitation, temperature, and dengue incidence in Bauru City, São Paulo State, from 2010 to 2018.
+
+## Key Factors of Research
+
+### Total Precipitation
+
+Total precipitation, including rainfall and other forms of precipitation, can create breeding grounds for mosquitoes, the vectors of dengue virus. Understanding the relationship between precipitation patterns and dengue incidence is essential for assessing the risk of dengue outbreaks.
+
+### Temperature
+
+Temperature plays a significant role in the development and reproduction of mosquitoes[1]. Warmer temperatures can accelerate the breeding cycle of mosquitoes, leading to increased transmission of dengue virus. Exploring the association between temperature and dengue incidence can provide insights into seasonal variations and potential outbreaks.
+
+### Dengue Virus
+
+The dengue virus belongs to the Flaviviridae family and is transmitted primarily by Aedes aegypti mosquitoes. There are four serotypes of the dengue virus, all capable of causing both classic and severe forms of the disease. Understanding the transmission cycle and factors influencing vector abundance is crucial for dengue prevention and control.
+
+# Methods
+
+## The dataset
+
+Two sources were utilized for the development of this work: INMET provided precipitation and temperature data from 2010 to 2018, while EMAP provided dengue case data for Bauru City, São Paulo State, during the same period.
+
+## Data collection
+
+Data from INMET[2] was obtained through gentle web scraping, while EMAP[3] data was downloaded from the website.
+
+## Data clean and preparation
+
+Cleaning the INMET data proved challenging due to irregularities in the data for each year, while EMAP data was relatively easier to clean. After thorough cleaning, both datasets were merged for statistical analysis.
+
+## Statistical analysis
+
+A linear regression model was applied to investigate any association between total precipitation, temperature, and dengue incidence.
+
+
+# Visualizations
+
+## Association Between Total Precipitation, Temperature, and Dengue Incidence
+
+```{r setup, include=FALSE}
+library(plotly)
+library(readr)
+
+data <- read.csv("Data/data-regression/final_table.csv")
+
+# Scatter plot of total precipitation vs. dengue cases
+plot_precipitation <- plot_ly(data, x = ~precipitation, y = ~casos, type = "scatter", mode = "markers",
+                               marker = list(color = "blue")) %>%
+                      layout(title = "Total Precipitation vs. Dengue Cases",
+                             xaxis = list(title = "Total Precipitation"),
+                             yaxis = list(title = "Dengue Cases"))
+
+plot_precipitation
+
+# Scatter plot of temperature vs. dengue cases
+plot_temperature <- plot_ly(data, x = ~temperature, y = ~casos, type = "scatter", mode = "markers",
+                            marker = list(color = "orange")) %>%
+                     layout(title = "Temperature vs. Dengue Cases",
+                            xaxis = list(title = "Temperature"),
+                            yaxis = list(title = "Dengue Cases"))
+
+plot_temperature
+
+# Scatter plot matrix for all variables
+plot_matrix <- plot_ly(data, x = ~precipitation, y = ~temperature, z = ~casos, type = "scatter3d",
+                       mode = "markers", marker = list(size = 3, color = ~casos)) %>%
+              layout(title = "Scatter Plot Matrix",
+                     scene = list(xaxis = list(title = "Total Precipitation"),
+                                  yaxis = list(title = "Temperature"),
+                                  zaxis = list(title = "Dengue Cases")))
+
+plot_matrix
+
+```
+
+# Discussion
+
+This study found no significant associations between temperature or precipitation and the number of dengue cases in Bauru City from 2010 to 2018. These findings contrast with previous research on the topic[4,5].
+
+
+# Limitations
+
+Future research should focus on analyzing the association between these variables and dengue cases by season rather than by year. Additionally, the decentralized nature of data sources in Brazil, along with variations in data format and column names, posed challenges for data collection and analysis.
+
+# References
+
+[1] Oliveira, R. M. A., & Siqueira, J. B. (2008). Oportunista ou persistente? A evolução do dengue no Brasil. [Online]. Available: https://www.ioc.fiocruz.br/dengue/textos/oportunista.html
+
+[2] INMET - Instituto Nacional de Meteorologia. (n.d.). Dados históricos de precipitação e temperatura. [Online]. Available: https://portal.inmet.gov.br/dadoshistoricos
+
+[3] EMAP - Info Dengue. (n.d.). Dados de incidência de casos de dengue. [Online]. Available: https://info.dengue.mat.br/services/api
+
+[4] Souza-Santos, R., & Carvalho, M. S. (2005). Impacto da variação de cobertura vegetal sobre a incidência de dengue e a dinâmica do vetor: um estudo de caso em cinco cidades da região do Vale do Paraíba, Estado de São Paulo, Brasil. Revista de Saúde Pública, 39(4), 655-662. [Online]. Available: https://www.scielo.br/j/rsp/a/DJFn4n8LS4LXDxkSNbrLTCS/#:~:text=A%20incid%C3%AAncia%20de%20casos%20de,tamb%C3%A9m%20o%20desenvolvimento%20do%20vetor.
+
+[5] IOC - Instituto Oswaldo Cruz. (n.d.). Dengue – Vírus e Vetor. [Online]. Available: https://www.ioc.fiocruz.br/dengue/textos/sobreovirus.html#:~:text=O%20ciclo%20de%20transmiss%C3%A3o%20da,capaz%20de%20transmitir%20enquanto%20viver.
+
