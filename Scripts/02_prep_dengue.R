@@ -55,5 +55,5 @@ df[25, 1] <- "Região Centro-Oeste"
 df[26, 1] <- "Mato Grosso do Sul"
 
 # Write the data frame to a CSV file
-write.csv(df, "extracted_data.csv", row.names = FALSE)
+write.csv(df, "cases_states.csv", row.names = FALSE)
 
