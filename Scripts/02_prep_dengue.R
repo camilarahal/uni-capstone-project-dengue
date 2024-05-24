@@ -2,7 +2,11 @@
 
 # Using regular expressions to recreate structure from PDF to CSV file.
 
-# Split the text into lines
+# Split the text into lines (pdf_text was collected in Script 01_data_collection)
+
+# Load required libraries
+library(dplyr)
+
 lines <- strsplit(pdf_text, "\n")[[1]]
 
 # Filter out lines containing the title and subtitle
@@ -57,3 +61,36 @@ df[26, 1] <- "Mato Grosso do Sul"
 # Write the data frame to a CSV file
 write.csv(df, "cases_states.csv", row.names = FALSE)
 
+#---------------------------------- Dengue cases in Bauru city from 2010 to 2018
+rm(list = ls())
+
+# Define the file path
+file_path <- "Data/data-orig/dengue/dengue_bauru.csv"
+
+# Read the CSV file
+dengue_bauru <- read.csv(file_path)
+
+# Display the structure of the data
+str(dengue_bauru)
+summary(dengue_bauru)
+
+# Convert data_iniSE column to Date format
+dengue_bauru$data_iniSE <- as.Date(dengue_bauru$data_iniSE)
+
+# Create a new column for month-year
+dengue_bauru$month_year <- format(dengue_bauru$data_iniSE, "%m-%Y")
+
+# Select data_iniSE and casos columns
+selected_data <- dengue_bauru[, c("month_year", "casos")]
+
+# Aggregate data by month-year
+aggregated_data <- selected_data %>% 
+  group_by(month_year) %>% 
+  summarise(
+    casos = sum(casos)
+  )
+
+# View the aggregated data
+View(aggregated_data)
+# Write aggregated data to CSV
+write.csv(aggregated_data, "monthly_cases.csv", row.names = FALSE)
